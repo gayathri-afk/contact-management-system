@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <string.h>
+
+// Structure to represent a contact
+struct Contact {
+    int contactID;
+    char name[50];
+    char phone[15];
+    char email[50];
+};
+
+// Function to add a contact
+void addContact(struct Contact *contacts, int *count) {
+    printf("Enter contact ID: ");
+    scanf("%d", &contacts[*count].contactID);
+    getchar();  // To consume the newline character left by scanf
+
+    printf("Enter contact name: ");
+    fgets(contacts[*count].name, 50, stdin);
+    contacts[*count].name[strcspn(contacts[*count].name, "\n")] = '\0';  // Remove newline character
+
+    printf("Enter contact phone number: ");
+    fgets(contacts[*count].phone, 15, stdin);
+    contacts[*count].phone[strcspn(contacts[*count].phone, "\n")] = '\0';  // Remove newline character
+
+    printf("Enter contact email: ");
+    fgets(contacts[*count].email, 50, stdin);
+    contacts[*count].email[strcspn(contacts[*count].email, "\n")] = '\0';  // Remove newline character
+
+    (*count)++;
+    printf("Contact added successfully!\n");
+}
+
+// Function to display all contacts
+void displayContacts(struct Contact *contacts, int count) {
+    if (count == 0) {
+        printf("No contacts available.\n");
+    } else {
+        printf("\nList of Contacts:\n");
+        printf("ID\tName\t\tPhone\t\tEmail\n");
+        printf("--------------------------------------------\n");
+        for (int i = 0; i < count; i++) {
+            printf("%d\t%s\t\t%s\t\t%s\n", contacts[i].contactID, contacts[i].name, contacts[i].phone, contacts[i].email);
+        }
+    }
+}
+
+// Function to search for a contact by its ID
+void searchContact(struct Contact *contacts, int count) {
+    int id;
+    printf("Enter contact ID to search: ");
+    scanf("%d", &id);
+
+    int found = 0;
+    for (int i = 0; i < count; i++) {
+        if (contacts[i].contactID == id) {
+            printf("Contact Found: \n");
+            printf("ID: %d\n", contacts[i].contactID);
+            printf("Name: %s\n", contacts[i].name);
+            printf("Phone: %s\n", contacts[i].phone);
+            printf("Email: %s\n", contacts[i].email);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Contact not found.\n");
+    }
+}
+
+// Function to delete a contact by its ID
+void deleteContact(struct Contact *contacts, int *count) {
+    int id;
+    printf("Enter contact ID to delete: ");
+    scanf("%d", &id);
+
+    int found = 0;
+    for (int i = 0; i < *count; i++) {
+        if (contacts[i].contactID == id) {
+            for (int j = i; j < *count - 1; j++) {
+                contacts[j] = contacts[j + 1];  // Shift contacts to remove the deleted contact
+            }
+            (*count)--;  // Decrease the count
+            printf("Contact with ID %d deleted successfully.\n", id);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Contact not found.\n");
+    }
+}
+
+int main() {
+    struct Contact contacts[100];  // Array to store contacts
+    int count = 0;  // Keep track of the number of contacts
+    int choice;
+
+    while (1) {
+        printf("\nContact Management System\n");
+        printf("1. Add Contact\n");
+        printf("2. Display All Contacts\n");
+        printf("3. Search Contact\n");
+        printf("4. Delete Contact\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addContact(contacts, &count);
+                break;
+            case 2:
+                displayContacts(contacts, count);
+                break;
+            case 3:
+                searchContact(contacts, count);
+                break;
+            case 4:
+                deleteContact(contacts, &count);
+                break;
+            case 5:
+                printf("Exiting system...\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
